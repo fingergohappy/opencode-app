@@ -233,6 +233,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     final colors = theme.colorScheme;
 
     return AppScaffold(
+      serverId: widget.serverId,
       titleWidget: Row(
         children: [
           Text('OpenCode', style: TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.bold)),

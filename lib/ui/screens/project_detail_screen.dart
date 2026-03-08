@@ -16,6 +16,7 @@ class ProjectDetailScreen extends StatelessWidget {
     final name = worktree == '/' ? 'global' : worktree.split('/').last;
 
     return AppScaffold(
+      serverId: serverId,
       title: name,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
