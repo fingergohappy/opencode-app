@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
-import '../../data/server_store.dart';
-import '../../models/server_config.dart';
-import '../widgets/app_drawer.dart';
+import '../../../../data/server_store.dart';
+import '../../../../models/server_config.dart';
+import '../../../widgets/app_drawer.dart';
 
 class ServerListScreen extends StatefulWidget {
   const ServerListScreen({super.key});
@@ -35,7 +35,9 @@ class _ServerListScreenState extends State<ServerListScreen> {
   void _showAddServerDialog(ServerConfig? initial) {
     final nameController = TextEditingController(text: initial?.name);
     final hostController = TextEditingController(text: initial?.host);
-    final portController = TextEditingController(text: (initial?.port ?? 8080).toString());
+    final portController = TextEditingController(
+      text: (initial?.port ?? 8080).toString(),
+    );
     final usernameController = TextEditingController(text: initial?.username);
     final passwordController = TextEditingController(text: initial?.password);
     bool testing = false;
@@ -54,7 +56,12 @@ class _ServerListScreenState extends State<ServerListScreen> {
       });
 
       try {
-        final response = await http.get(url).timeout(const Duration(seconds: 5));
+        final response = await Dio()
+            .get<dynamic>(
+              url.toString(),
+              options: Options(validateStatus: (_) => true),
+            )
+            .timeout(const Duration(seconds: 5));
         if (response.statusCode == 200) {
           setDialogState(() {
             testing = false;
@@ -91,18 +98,30 @@ class _ServerListScreenState extends State<ServerListScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: testSuccess ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
+                      color: testSuccess
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: testSuccess ? Colors.green : Colors.red, width: 0.5),
+                      border: Border.all(
+                        color: testSuccess ? Colors.green : Colors.red,
+                        width: 0.5,
+                      ),
                     ),
                     child: Row(
                       children: [
-                        Icon(testSuccess ? Icons.check_circle : Icons.error, color: testSuccess ? Colors.green : Colors.red, size: 18),
+                        Icon(
+                          testSuccess ? Icons.check_circle : Icons.error,
+                          color: testSuccess ? Colors.green : Colors.red,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             testMessage!,
-                            style: TextStyle(color: testSuccess ? Colors.green : Colors.red, fontSize: 13),
+                            style: TextStyle(
+                              color: testSuccess ? Colors.green : Colors.red,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ],
@@ -158,18 +177,22 @@ class _ServerListScreenState extends State<ServerListScreen> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: testing
-                  ? null
-                  : () => testConnection(setDialogState),
+              onPressed: testing ? null : () => testConnection(setDialogState),
               child: testing
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : const Text('Test'),
             ),
             ElevatedButton(
               onPressed: () async {
                 final server = ServerConfig(
                   id: initial?.id,
-                  name: nameController.text.isEmpty ? hostController.text : nameController.text,
+                  name: nameController.text.isEmpty
+                      ? hostController.text
+                      : nameController.text,
                   host: hostController.text,
                   port: int.tryParse(portController.text) ?? 8080,
                   username: usernameController.text,
@@ -219,7 +242,10 @@ class _ServerListScreenState extends State<ServerListScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'Select a server to connect',
-                        style: TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -250,7 +276,10 @@ class _ServerListScreenState extends State<ServerListScreen> {
         onPressed: () => _showAddServerDialog(null),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
-        child: const Text('+', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300)),
+        child: const Text(
+          '+',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
+        ),
       ),
     );
   }
@@ -336,15 +365,21 @@ class _ServerCard extends StatelessWidget {
                 ),
               ),
               PopupMenuButton(
-                icon: Text('⋮', style: TextStyle(fontSize: 18, color: colorScheme.onSurfaceVariant)),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    onTap: onEdit,
-                    child: const Text('Edit'),
+                icon: Text(
+                  '⋮',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: colorScheme.onSurfaceVariant,
                   ),
+                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(onTap: onEdit, child: const Text('Edit')),
                   PopupMenuItem(
                     onTap: onDelete,
-                    child: Text('Delete', style: TextStyle(color: colorScheme.error)),
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(color: colorScheme.error),
+                    ),
                   ),
                 ],
               ),

@@ -1,16 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'ui/screens/server_list_screen.dart';
-import 'ui/screens/project_list_screen.dart';
-import 'ui/screens/project_detail_screen.dart';
-import 'ui/screens/settings_screen.dart';
+import 'ui/screens/project/list/screen.dart';
+import 'ui/screens/project/session_screen.dart';
+import 'ui/screens/server/session/screen.dart';
+import 'ui/screens/settings/screen.dart';
 
 final router = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const ServerListScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const ServerListScreen()),
     GoRoute(
       path: '/projects/:serverId',
       builder: (context, state) {
@@ -19,11 +16,16 @@ final router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/projects/:serverId/detail',
+      path: '/projects/:serverId/session',
       builder: (context, state) {
         final serverId = state.pathParameters['serverId']!;
         final worktree = state.uri.queryParameters['worktree'] ?? '';
-        return ProjectDetailScreen(serverId: serverId, worktree: worktree);
+        final sessionId = state.uri.queryParameters['session'];
+        return ProjectSessionScreen(
+          serverId: serverId,
+          worktree: worktree,
+          sessionId: sessionId,
+        );
       },
     ),
     GoRoute(

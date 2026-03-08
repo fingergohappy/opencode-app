@@ -47,6 +47,32 @@ class Pty {
   );
 }
 
+class SessionSummary {
+  final int additions;
+  final int deletions;
+  final int files;
+
+  SessionSummary({this.additions = 0, this.deletions = 0, this.files = 0});
+
+  factory SessionSummary.fromJson(Map<String, dynamic> json) => SessionSummary(
+    additions: json['additions'] ?? 0,
+    deletions: json['deletions'] ?? 0,
+    files: json['files'] ?? 0,
+  );
+}
+
+class SessionTime {
+  final int created;
+  final int updated;
+
+  SessionTime({required this.created, required this.updated});
+
+  factory SessionTime.fromJson(Map<String, dynamic> json) => SessionTime(
+    created: json['created'] ?? 0,
+    updated: json['updated'] ?? 0,
+  );
+}
+
 class Session {
   final String id;
   final String slug;
@@ -54,8 +80,21 @@ class Session {
   final String? workspaceID;
   final String directory;
   final String title;
+  final String? version;
+  final SessionSummary? summary;
+  final SessionTime? time;
 
-  Session({required this.id, required this.slug, required this.projectID, this.workspaceID, required this.directory, required this.title});
+  Session({
+    required this.id,
+    required this.slug,
+    required this.projectID,
+    this.workspaceID,
+    required this.directory,
+    required this.title,
+    this.version,
+    this.summary,
+    this.time,
+  });
 
   factory Session.fromJson(Map<String, dynamic> json) => Session(
     id: json['id'],
@@ -64,6 +103,9 @@ class Session {
     workspaceID: json['workspaceID'],
     directory: json['directory'],
     title: json['title'],
+    version: json['version'],
+    summary: json['summary'] != null ? SessionSummary.fromJson(json['summary']) : null,
+    time: json['time'] != null ? SessionTime.fromJson(json['time']) : null,
   );
 }
 

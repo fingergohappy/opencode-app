@@ -63,10 +63,7 @@ class _Header extends StatelessWidget {
   final Project project;
   final String projectName;
 
-  const _Header({
-    required this.project,
-    required this.projectName,
-  });
+  const _Header({required this.project, required this.projectName});
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +135,7 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Text(
         'No sessions yet',
-        style: TextStyle(
-          color: colorScheme.onSurfaceVariant,
-          fontSize: 13,
-        ),
+        style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
       ),
     );
   }
@@ -195,7 +189,7 @@ class _SessionList extends StatelessWidget {
             Navigator.pop(context);
             if (serverId != null && selectedProject != null) {
               context.push(
-                '/projects/$serverId/detail?worktree=${Uri.encodeComponent(selectedProject!.worktree)}&session=${session.id}',
+                '/projects/$serverId/session?worktree=${Uri.encodeComponent(selectedProject!.worktree)}&session=${session.id}',
               );
             }
           },

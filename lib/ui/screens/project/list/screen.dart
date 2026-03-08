@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/server_store.dart';
-import '../../models/project.dart';
-import '../../models/server_config.dart';
-import '../../network/opencode_client.dart';
-import '../../network/api.dart';
-import '../widgets/app_drawer.dart';
+import '../../../../data/server_store.dart';
+import '../../../../models/project.dart';
+import '../../../../models/server_config.dart';
+import '../../../../network/opencode_client.dart';
+import '../../../../network/api.dart';
+import '../../../../utils/app_logger.dart';
+import '../../../widgets/app_drawer.dart';
 
 const String _TAG = 'ProjectListScreen';
+const _logger = AppLogger(_TAG);
 
 void _log(String message) {
-  print('[$_TAG] $message');
+  _logger.info(message);
 }
 
 class ProjectListScreen extends StatefulWidget {
@@ -101,7 +103,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     _log('searchProjects: query=$query');
     _debounceTimer?.cancel();
     _debounceTimer = Timer(const Duration(milliseconds: 250), () async {
-      _log('searchProjects debounce triggered: query=$query client=${_client != null}');
+      _log(
+        'searchProjects debounce triggered: query=$query client=${_client != null}',
+      );
       if (_client == null) {
         _log('searchProjects: client is null, returning');
         return;
@@ -120,7 +124,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       }
 
       // Wait for home path if needed
-      if ((trimmedQuery.isEmpty || trimmedQuery.startsWith('~')) && _homePath.isEmpty) {
+      if ((trimmedQuery.isEmpty || trimmedQuery.startsWith('~')) &&
+          _homePath.isEmpty) {
         _log('searchProjects: waiting for homePath, homePath=$_homePath');
         setState(() {
           _pathSuggestions = [];
@@ -132,7 +137,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       final requestPath = _expandHomePath(trimmedQuery, _homePath);
       final fileQuery = _buildFileQuery(requestPath, _homePath);
 
-      _log('searchProjects: requestPath=$requestPath directory=${fileQuery['directory']} path=${fileQuery['path']} homePath=$_homePath');
+      _log(
+        'searchProjects: requestPath=$requestPath directory=${fileQuery['directory']} path=${fileQuery['path']} homePath=$_homePath',
+      );
 
       final fileApi = FileApi(_client!);
       try {
@@ -151,7 +158,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
             _pathSuggestions = suggestions.map((e) => e.absolute).toList();
             _suggestionsExpanded = _pathSuggestions.isNotEmpty;
           });
-          _log('searchProjects: suggestionsExpanded=$_suggestionsExpanded pathSuggestions.length=${_pathSuggestions.length}');
+          _log(
+            'searchProjects: suggestionsExpanded=$_suggestionsExpanded pathSuggestions.length=${_pathSuggestions.length}',
+          );
         }
       } catch (e, stack) {
         _log('searchProjects error: $e');
@@ -168,7 +177,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   String _formatPathForDisplay(String absolutePath, String homePath) {
-    if (homePath.isEmpty || !absolutePath.startsWith(homePath)) return absolutePath;
+    if (homePath.isEmpty || !absolutePath.startsWith(homePath))
+      return absolutePath;
     final remainder = absolutePath.substring(homePath.length);
     return remainder.isEmpty ? '~' : '~$remainder';
   }
@@ -211,19 +221,25 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     }
 
     final expandedPath = _expandHomePath(rawPath, _homePath);
-    final normalizedPath = expandedPath.length > 1 ? expandedPath.replaceAll(RegExp(r'/+$'), '') : expandedPath;
+    final normalizedPath = expandedPath.length > 1
+        ? expandedPath.replaceAll(RegExp(r'/+$'), '')
+        : expandedPath;
 
     setState(() {
       _suggestionsExpanded = false;
     });
-    context.push('/projects/${widget.serverId}/detail?worktree=${Uri.encodeComponent(normalizedPath)}');
+    context.push(
+      '/projects/${widget.serverId}/session?worktree=${Uri.encodeComponent(normalizedPath)}',
+    );
   }
 
   void _selectSuggestion(String suggestion) {
     final displayPath = _formatPathForDisplay(suggestion, _homePath);
     final continuedPath = _continueSearchPath(displayPath);
     _pathController.text = continuedPath;
-    _pathController.selection = TextSelection.fromPosition(TextPosition(offset: continuedPath.length));
+    _pathController.selection = TextSelection.fromPosition(
+      TextPosition(offset: continuedPath.length),
+    );
     _triggerSuggestions('suggestion-select');
   }
 
@@ -236,7 +252,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       serverId: widget.serverId,
       titleWidget: Row(
         children: [
-          Text('OpenCode', style: TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.bold)),
+          Text(
+            'OpenCode',
+            style: TextStyle(
+              fontFamily: 'monospace',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           SizedBox(width: 8),
           _StatusBadge(_healthy),
         ],
@@ -252,15 +274,31 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child: Column(
                         children: [
-                          Text('OpenCode', style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
+                          Text(
+                            'OpenCode',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'monospace',
+                            ),
+                          ),
                           SizedBox(height: 12),
-                          Text('Enter project path', style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant)),
+                          Text(
+                            'Enter project path',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: colors.onSurfaceVariant,
+                            ),
+                          ),
                           SizedBox(height: 20),
                           Container(
                             decoration: BoxDecoration(
                               color: colors.surface,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: colors.outline, width: 0.5),
+                              border: Border.all(
+                                color: colors.outline,
+                                width: 0.5,
+                              ),
                             ),
                             padding: EdgeInsets.all(16),
                             child: Column(
@@ -272,18 +310,23 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                   decoration: InputDecoration(
                                     labelText: 'Project Path',
                                     hintText: '/path/to/project',
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                     suffixIcon: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         if (_pathController.text.isNotEmpty)
-                                          IconButton(icon: Icon(Icons.clear), onPressed: () {
-                                            _pathController.clear();
-                                            setState(() {
-                                              _pathSuggestions = [];
-                                              _suggestionsExpanded = false;
-                                            });
-                                          }),
+                                          IconButton(
+                                            icon: Icon(Icons.clear),
+                                            onPressed: () {
+                                              _pathController.clear();
+                                              setState(() {
+                                                _pathSuggestions = [];
+                                                _suggestionsExpanded = false;
+                                              });
+                                            },
+                                          ),
                                         TextButton(
                                           onPressed: _openProjectFromInput,
                                           child: Text('Open'),
@@ -297,29 +340,50 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                     _searchProjects(value);
                                   },
                                 ),
-                                if (_suggestionsExpanded && _pathSuggestions.isNotEmpty) ...[
+                                if (_suggestionsExpanded &&
+                                    _pathSuggestions.isNotEmpty) ...[
                                   SizedBox(height: 8),
                                   Container(
                                     constraints: BoxConstraints(maxHeight: 180),
                                     decoration: BoxDecoration(
-                                      color: colors.surfaceContainerHighest.withValues(alpha: 0.5),
+                                      color: colors.surfaceContainerHighest
+                                          .withValues(alpha: 0.5),
                                       borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: colors.outline.withValues(alpha: 0.3), width: 0.5),
+                                      border: Border.all(
+                                        color: colors.outline.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                        width: 0.5,
+                                      ),
                                     ),
                                     child: ListView.builder(
                                       shrinkWrap: true,
-                                      padding: EdgeInsets.symmetric(vertical: 4),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
                                       itemCount: _pathSuggestions.length,
                                       itemBuilder: (context, index) {
-                                        final suggestion = _pathSuggestions[index];
-                                        final displayPath = _formatPathForDisplay(suggestion, _homePath);
+                                        final suggestion =
+                                            _pathSuggestions[index];
+                                        final displayPath =
+                                            _formatPathForDisplay(
+                                              suggestion,
+                                              _homePath,
+                                            );
                                         return InkWell(
-                                          onTap: () => _selectSuggestion(suggestion),
+                                          onTap: () =>
+                                              _selectSuggestion(suggestion),
                                           child: Padding(
-                                            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 10,
+                                            ),
                                             child: Text(
                                               displayPath,
-                                              style: TextStyle(fontFamily: 'monospace', fontSize: 13),
+                                              style: TextStyle(
+                                                fontFamily: 'monospace',
+                                                fontSize: 13,
+                                              ),
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -330,7 +394,13 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                   ),
                                 ],
                                 SizedBox(height: 10),
-                                Text('Recent projects shown below', style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant)),
+                                Text(
+                                  'Recent projects shown below',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: colors.onSurfaceVariant,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -350,12 +420,30 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                     child: Column(
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 6,
+                          ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Recent Projects', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.onSurfaceVariant)),
-                              Text('${_projects.length} total', style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant.withValues(alpha: 0.6))),
+                              Text(
+                                'Recent Projects',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: colors.onSurfaceVariant,
+                                ),
+                              ),
+                              Text(
+                                '${_projects.length} total',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: colors.onSurfaceVariant.withValues(
+                                    alpha: 0.6,
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -366,7 +454,12 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                             separatorBuilder: (_, __) => SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final project = _projects[index];
-                              return _ProjectCard(project, () => context.push('/projects/${widget.serverId}/detail?worktree=${Uri.encodeComponent(project.worktree)}'));
+                              return _ProjectCard(
+                                project,
+                                () => context.push(
+                                  '/projects/${widget.serverId}/session?worktree=${Uri.encodeComponent(project.worktree)}',
+                                ),
+                              );
                             },
                           ),
                         ),
@@ -396,9 +489,20 @@ class _StatusBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(width: 6, height: 6, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
           SizedBox(width: 4),
-          Text(healthy ? 'Online' : 'Offline', style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.w500)),
+          Text(
+            healthy ? 'Online' : 'Offline',
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ],
       ),
     );
@@ -413,7 +517,9 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final name = project.worktree == '/' ? 'global' : project.worktree.split('/').last;
+    final name = project.worktree == '/'
+        ? 'global'
+        : project.worktree.split('/').last;
     final iconColor = _parseColor(project.icon?.color) ?? colors.primary;
 
     return InkWell(
@@ -436,16 +542,38 @@ class _ProjectCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               alignment: Alignment.center,
-              child: Text(name[0].toUpperCase(), style: TextStyle(color: iconColor, fontWeight: FontWeight.bold, fontSize: 14, fontFamily: 'monospace')),
+              child: Text(
+                name[0].toUpperCase(),
+                style: TextStyle(
+                  color: iconColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  fontFamily: 'monospace',
+                ),
+              ),
             ),
             SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    name,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   SizedBox(height: 2),
-                  Text(project.worktree, style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant, fontFamily: 'monospace'), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  Text(
+                    project.worktree,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: colors.onSurfaceVariant,
+                      fontFamily: 'monospace',
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
