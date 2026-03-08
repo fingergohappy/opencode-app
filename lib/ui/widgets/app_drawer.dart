@@ -3,15 +3,22 @@ import 'package:go_router/go_router.dart';
 import '../../models/project.dart';
 import '../../models/api_models.dart';
 import '../../models/server_config.dart';
-import '../../network/opencode_client.dart';
-import '../../network/api.dart';
 import '../../data/server_store.dart';
 
 class AppDrawer extends StatefulWidget {
   final bool showServers;
   final String? serverId;
+  // External data for project mode - will be passed in later
+  final List<Project>? projects;
+  final List<Session>? sessions;
 
-  const AppDrawer({super.key, this.showServers = true, this.serverId});
+  const AppDrawer({
+    super.key,
+    this.showServers = true,
+    this.serverId,
+    this.projects,
+    this.sessions,
+  });
 
   @override
   State<AppDrawer> createState() => _AppDrawerState();
@@ -22,7 +29,6 @@ class _AppDrawerState extends State<AppDrawer> {
   List<Project> _projects = [];
   List<Session> _sessions = [];
   Project? _selectedProject;
-  OpenCodeClient? _client;
 
   // For server mode (when serverId is null)
   List<ServerConfig> _servers = [];
@@ -34,6 +40,28 @@ class _AppDrawerState extends State<AppDrawer> {
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  @override
+  void didUpdateWidget(AppDrawer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update when external data changes
+    if (widget.projects != oldWidget.projects || widget.sessions != oldWidget.sessions) {
+      _updateFromExternalData();
+    }
+  }
+
+  void _updateFromExternalData() {
+    if (widget.projects != null) {
+      _projects = widget.projects!;
+      _selectedProject = _projects.isNotEmpty ? _projects.first : null;
+    }
+    if (widget.sessions != null) {
+      _sessions = widget.sessions!;
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 
   Future<void> _loadData() async {
@@ -51,34 +79,24 @@ class _AppDrawerState extends State<AppDrawer> {
       return;
     }
 
-    // Project mode - load projects and sessions for the server
-    final server = await serverStore.getById(widget.serverId!);
-    if (server == null) {
-      setState(() => _loading = false);
+    // Project mode - use external data if provided, otherwise show empty
+    if (widget.projects != null) {
+      _updateFromExternalData();
       return;
     }
 
-    _client = OpenCodeClient(server.baseUrl);
-
-    final projectApi = ProjectApi(_client!);
-    final sessionApi = SessionApi(_client!);
-
-    final projects = await projectApi.getProjects();
-    final sessions = await sessionApi.getSessions();
-
+    // No external data yet - show empty state
     setState(() {
-      _projects = projects;
-      _sessions = sessions;
-      _selectedProject = projects.isNotEmpty ? projects.first : null;
+      _projects = [];
+      _sessions = [];
+      _selectedProject = null;
       _loading = false;
     });
   }
 
   Future<void> _createNewSession() async {
-    if (_client == null || _selectedProject == null) return;
+    if (_selectedProject == null) return;
     // TODO: Implement session creation API
-    // For now, just refresh the session list
-    await _loadData();
   }
 
   List<Session> _getSessionsForProject(String projectId) {
@@ -616,6 +634,8 @@ class AppScaffold extends StatelessWidget {
   final bool showDrawer;
   final bool showServersInDrawer;
   final String? serverId;
+  final List<Project>? drawerProjects;
+  final List<Session>? drawerSessions;
 
   const AppScaffold({
     super.key,
@@ -627,6 +647,8 @@ class AppScaffold extends StatelessWidget {
     this.showDrawer = true,
     this.showServersInDrawer = true,
     this.serverId,
+    this.drawerProjects,
+    this.drawerSessions,
   });
 
   @override
@@ -657,7 +679,14 @@ class AppScaffold extends StatelessWidget {
             ),
         actions: actions,
       ),
-      drawer: showDrawer ? AppDrawer(showServers: showServersInDrawer, serverId: serverId) : null,
+      drawer: showDrawer
+          ? AppDrawer(
+              showServers: showServersInDrawer,
+              serverId: serverId,
+              projects: drawerProjects,
+              sessions: drawerSessions,
+            )
+          : null,
       body: body,
       floatingActionButton: floatingActionButton,
     );
