@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../data/server_store.dart';
 import '../../../../models/project.dart';
-import '../../../../models/server_config.dart';
 import '../../../../network/opencode_client.dart';
 import '../../../../network/api.dart';
 import '../../../../utils/app_logger.dart';
 import '../../../widgets/app_drawer.dart';
 
-const String _TAG = 'ProjectListScreen';
-const _logger = AppLogger(_TAG);
+const String _tag = 'ProjectListScreen';
+const _logger = AppLogger(_tag);
 
 void _log(String message) {
   _logger.info(message);
@@ -28,7 +27,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   final _serverStore = ServerStore();
   final _pathController = TextEditingController();
   final _focusNode = FocusNode();
-  ServerConfig? _server;
   List<Project> _projects = [];
   bool _loading = true;
   bool _healthy = false;
@@ -82,7 +80,6 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
     _log('loadData: pathInfo.home=${pathInfo.home}');
 
     setState(() {
-      _server = server;
       _healthy = health.healthy;
       _projects = projects;
       _homePath = pathInfo.home;
@@ -177,8 +174,9 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   String _formatPathForDisplay(String absolutePath, String homePath) {
-    if (homePath.isEmpty || !absolutePath.startsWith(homePath))
+    if (homePath.isEmpty || !absolutePath.startsWith(homePath)) {
       return absolutePath;
+    }
     final remainder = absolutePath.substring(homePath.length);
     return remainder.isEmpty ? '~' : '~$remainder';
   }
@@ -451,7 +449,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                           child: ListView.separated(
                             padding: EdgeInsets.only(top: 4, bottom: 8),
                             itemCount: _projects.length,
-                            separatorBuilder: (_, __) => SizedBox(height: 8),
+                            separatorBuilder: (_, index) => SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final project = _projects[index];
                               return _ProjectCard(

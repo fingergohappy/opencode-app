@@ -199,10 +199,9 @@ class _ServerListScreenState extends State<ServerListScreen> {
                   password: passwordController.text,
                 );
                 await _serverStore.save(server);
-                if (mounted) {
-                  Navigator.pop(dialogContext);
-                  _loadServers();
-                }
+                if (!dialogContext.mounted || !mounted) return;
+                Navigator.pop(dialogContext);
+                _loadServers();
               },
               child: const Text('Save'),
             ),
@@ -255,7 +254,7 @@ class _ServerListScreenState extends State<ServerListScreen> {
                   child: ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                     itemCount: _servers.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
+                    separatorBuilder: (_, index) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final server = _servers[index];
                       return _ServerCard(
@@ -292,7 +291,6 @@ class _ServerCard extends StatelessWidget {
   final VoidCallback onDelete;
 
   const _ServerCard({
-    super.key,
     required this.server,
     required this.onTap,
     required this.onEdit,

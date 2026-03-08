@@ -221,8 +221,8 @@ class _ThinkingStrengthSelector extends StatelessWidget {
   }
 }
 
-const String _TAG = 'ProjectSessionScreen';
-const _logger = AppLogger(_TAG);
+const String _tag = 'ProjectSessionScreen';
+const _logger = AppLogger(_tag);
 
 void _log(String message) {
   _logger.info(message);

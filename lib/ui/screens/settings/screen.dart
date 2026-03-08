@@ -107,8 +107,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return SimpleDialogOption(
             onPressed: () async {
               await _settingsStore.setLanguage(lang);
+              if (!mounted) return;
               setState(() => _language = lang);
-              if (mounted) Navigator.pop(dialogContext);
+              if (dialogContext.mounted) {
+                Navigator.pop(dialogContext);
+              }
             },
             child: Text(lang.value),
           );

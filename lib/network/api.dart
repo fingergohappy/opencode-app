@@ -311,7 +311,7 @@ class FindApi {
         query: {
           ...?context,
           'query': query,
-          if (directory != null) 'directory': directory,
+          ...?(directory == null ? null : {'directory': directory}),
         },
         fromJson: (data) =>
             (data as List).map((e) => FileNode.fromJson(e)).toList(),

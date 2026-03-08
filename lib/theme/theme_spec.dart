@@ -70,7 +70,7 @@ class OpenCodeThemeDefinition {
         surfaceContainerHighest: surfaceVariant,
         onSurfaceVariant: variant.text,
         outline: variant.border,
-        outlineVariant: variant.border.withOpacity(0.7),
+        outlineVariant: variant.border.withValues(alpha: 0.7),
       ),
       scaffoldBackgroundColor: variant.background,
       appBarTheme: AppBarTheme(
@@ -85,14 +85,18 @@ class OpenCodeThemeDefinition {
     final clamped = ratio.clamp(0.0, 1.0);
     final inverse = 1.0 - clamped;
     return Color.fromARGB(
-      ((a.alpha * inverse + b.alpha * clamped)).round(),
-      ((a.red * inverse + b.red * clamped)).round(),
-      ((a.green * inverse + b.green * clamped)).round(),
-      ((a.blue * inverse + b.blue * clamped)).round(),
+      _channelToInt(a.a * inverse + b.a * clamped),
+      _channelToInt(a.r * inverse + b.r * clamped),
+      _channelToInt(a.g * inverse + b.g * clamped),
+      _channelToInt(a.b * inverse + b.b * clamped),
     );
   }
 
+  int _channelToInt(double value) => (value * 255).round().clamp(0, 255);
+
   Color _contentColorFor(Color background) {
-    return background.computeLuminance() > 0.45 ? const Color(0xFF111111) : Colors.white;
+    return background.computeLuminance() > 0.45
+        ? const Color(0xFF111111)
+        : Colors.white;
   }
 }
