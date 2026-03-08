@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../data/server_store.dart';
-import '../../../models/api_models.dart';
-import '../../../models/message.dart';
-import '../../../models/config.dart';
-import '../../../network/opencode_client.dart';
-import '../../../network/api.dart';
-import '../../../utils/app_logger.dart';
-import '../../widgets/app_drawer.dart';
+import '../../../../data/server_store.dart';
+import '../../../../models/api_models.dart';
+import '../../../../models/message.dart';
+import '../../../../models/config.dart';
+import '../../../../network/opencode_client.dart';
+import '../../../../network/api.dart';
+import '../../../../utils/app_logger.dart';
+import '../../../widgets/app_drawer.dart';
 
 class _AgentSelector extends StatelessWidget {
   final List<Agent> agents;

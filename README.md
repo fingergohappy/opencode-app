@@ -18,10 +18,16 @@ lib/
 │   └── opencode_client.dart # HTTP 客户端
 ├── ui/
 │   └── screens/            # 页面
-│       ├── server_list_screen.dart    # 服务器列表
-│       ├── project_list_screen.dart   # 项目列表
-│       ├── project_detail_screen.dart # 项目详情
-│       └── settings_screen.dart       # 设置页面
+│       ├── server/
+│       │   └── session/
+│       │       └── screen.dart        # 服务器列表
+│       ├── project/
+│       │   ├── list/
+│       │   │   └── screen.dart        # 项目列表
+│       │   └── session/
+│       │       └── screen.dart        # 项目会话
+│       └── settings/
+│           └── screen.dart            # 设置页面
 ├── router.dart             # 路由配置
 └── main.dart              # 应用入口
 ```
@@ -30,7 +36,7 @@ lib/
 
 - ✅ 服务器管理（添加、删除、选择）
 - ✅ 项目列表展示
-- ✅ 项目详情查看
+- ✅ 项目会话查看
 - ✅ 设置页面（主题模式、主题预设、语言）
 - ✅ 本地数据持久化
 - ✅ 网络请求
@@ -71,7 +77,7 @@ flutter build ios
 ### 待完善
 - 主题系统（需要实现完整的主题切换）
 - 国际化（需要实现多语言支持）
-- 项目详情页面的完整功能
+- 项目会话页面的完整功能
 - 更多 API 接口的实现
 
 ## 与 Android 版本的差异

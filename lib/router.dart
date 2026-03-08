@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'ui/screens/project/list/screen.dart';
-import 'ui/screens/project/session_screen.dart';
+import 'ui/screens/project/session/screen.dart';
 import 'ui/screens/server/session/screen.dart';
 import 'ui/screens/settings/screen.dart';
 
