@@ -6,6 +6,7 @@ import '../../../../models/api_models.dart';
 import '../../../../models/message.dart';
 import '../../../../models/config.dart';
 import '../../../../network/opencode_client.dart';
+import '../../../../theme/theme_spec.dart';
 import '../../../../network/api.dart';
 import '../../../../utils/app_logger.dart';
 import '../../../widgets/app_drawer.dart';
@@ -358,6 +359,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
+    final semanticColors = theme.extension<OpenCodeThemeColors>();
 
     if (_loading) {
       return AppScaffold(
@@ -376,7 +378,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
           Expanded(
             child: _selectedTab == 0
                 ? _buildMessagesView(colors)
-                : _buildDiffView(colors),
+                : _buildDiffView(colors, semanticColors),
           ),
           _buildInputArea(colors),
         ],
@@ -503,7 +505,10 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     );
   }
 
-  Widget _buildDiffView(ColorScheme colors) {
+  Widget _buildDiffView(
+    ColorScheme colors,
+    OpenCodeThemeColors? semanticColors,
+  ) {
     if (_diffFiles.isEmpty) {
       return Center(
         child: Text(
@@ -519,26 +524,30 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
       itemCount: _diffFiles.length,
       itemBuilder: (context, index) {
         final file = _diffFiles[index];
-        return _buildDiffItem(file, colors);
+        return _buildDiffItem(file, colors, semanticColors);
       },
     );
   }
 
-  Widget _buildDiffItem(DiffFile file, ColorScheme colors) {
+  Widget _buildDiffItem(
+    DiffFile file,
+    ColorScheme colors,
+    OpenCodeThemeColors? semanticColors,
+  ) {
     Color statusColor;
     IconData statusIcon;
 
     switch (file.status) {
       case 'added':
-        statusColor = Colors.green;
+        statusColor = semanticColors?.diffAdd ?? colors.primary;
         statusIcon = Icons.add;
         break;
       case 'deleted':
-        statusColor = Colors.red;
+        statusColor = semanticColors?.diffDelete ?? colors.error;
         statusIcon = Icons.remove;
         break;
       default:
-        statusColor = Colors.orange;
+        statusColor = semanticColors?.warning ?? colors.tertiary;
         statusIcon = Icons.edit;
     }
 

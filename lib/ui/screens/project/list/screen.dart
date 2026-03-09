@@ -6,6 +6,7 @@ import '../../../../models/project.dart';
 import '../../../../network/opencode_client.dart';
 import '../../../../network/api.dart';
 import '../../../../utils/app_logger.dart';
+import 'path_search.dart';
 import '../../../widgets/app_drawer.dart';
 
 const String _tag = 'ProjectListScreen';
@@ -108,107 +109,23 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
         return;
       }
 
-      final trimmedQuery = query.trim();
-
-      // Skip if empty and not triggered
-      if (trimmedQuery.isEmpty && !_suggestionsExpanded) {
-        _log('searchProjects: empty query and not expanded, skipping');
-        setState(() {
-          _pathSuggestions = [];
-          _suggestionsExpanded = false;
-        });
-        return;
-      }
-
-      // Wait for home path if needed
-      if ((trimmedQuery.isEmpty || trimmedQuery.startsWith('~')) &&
-          _homePath.isEmpty) {
-        _log('searchProjects: waiting for homePath, homePath=$_homePath');
-        setState(() {
-          _pathSuggestions = [];
-          _suggestionsExpanded = false;
-        });
-        return;
-      }
-
-      final requestPath = _expandHomePath(trimmedQuery, _homePath);
-      final fileQuery = _buildFileQuery(requestPath, _homePath);
-
-      _log(
-        'searchProjects: requestPath=$requestPath directory=${fileQuery['directory']} path=${fileQuery['path']} homePath=$_homePath',
+      final searchService = ProjectPathSearchService(FileApi(_client!));
+      final result = await searchService.search(
+        query,
+        homePath: _homePath,
+        suggestionsExpanded: _suggestionsExpanded,
       );
 
-      final fileApi = FileApi(_client!);
-      try {
-        final suggestions = await fileApi.listFiles(
-          fileQuery['path'] ?? '',
-          directory: fileQuery['directory'],
-        );
+      if (!mounted) return;
 
-        _log('searchProjects: got ${suggestions.length} suggestions');
-        for (final s in suggestions.take(5)) {
-          _log('  - ${s.absolute}');
-        }
-
-        if (mounted) {
-          setState(() {
-            _pathSuggestions = suggestions.map((e) => e.absolute).toList();
-            _suggestionsExpanded = _pathSuggestions.isNotEmpty;
-          });
-          _log(
-            'searchProjects: suggestionsExpanded=$_suggestionsExpanded pathSuggestions.length=${_pathSuggestions.length}',
-          );
-        }
-      } catch (e, stack) {
-        _log('searchProjects error: $e');
-        _log('stack: $stack');
-      }
+      setState(() {
+        _pathSuggestions = result.suggestions;
+        _suggestionsExpanded = result.expanded;
+      });
+      _log(
+        'searchProjects: suggestionsExpanded=$_suggestionsExpanded pathSuggestions.length=${_pathSuggestions.length}',
+      );
     });
-  }
-
-  String _expandHomePath(String path, String homePath) {
-    if (!path.startsWith('~') || homePath.isEmpty) return path;
-    if (path == '~') return homePath;
-    if (path.startsWith('~/')) return homePath + path.substring(1);
-    return path;
-  }
-
-  String _formatPathForDisplay(String absolutePath, String homePath) {
-    if (homePath.isEmpty || !absolutePath.startsWith(homePath)) {
-      return absolutePath;
-    }
-    final remainder = absolutePath.substring(homePath.length);
-    return remainder.isEmpty ? '~' : '~$remainder';
-  }
-
-  String _continueSearchPath(String path) {
-    if (path == '/') return path;
-    if (path.endsWith('/')) return path;
-    return '$path/';
-  }
-
-  Map<String, String?> _buildFileQuery(String inputPath, String homePath) {
-    if (inputPath.isEmpty) {
-      return {'directory': homePath.isEmpty ? null : homePath, 'path': ''};
-    }
-
-    if (inputPath == '/') {
-      return {'directory': '/', 'path': ''};
-    }
-
-    if (inputPath.endsWith('/')) {
-      final dir = inputPath.substring(0, inputPath.length - 1);
-      return {'directory': dir.isEmpty ? '/' : dir, 'path': ''};
-    }
-
-    final lastSlashIndex = inputPath.lastIndexOf('/');
-    if (lastSlashIndex >= 0) {
-      final directory = inputPath.substring(0, lastSlashIndex);
-      final path = inputPath.substring(lastSlashIndex + 1);
-      return {'directory': directory.isEmpty ? '/' : directory, 'path': path};
-    }
-
-    return {'directory': homePath.isEmpty ? null : homePath, 'path': inputPath};
   }
 
   void _openProjectFromInput() {
@@ -218,7 +135,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
       return;
     }
 
-    final expandedPath = _expandHomePath(rawPath, _homePath);
+    final expandedPath = expandHomePath(rawPath, _homePath);
     final normalizedPath = expandedPath.length > 1
         ? expandedPath.replaceAll(RegExp(r'/+$'), '')
         : expandedPath;
@@ -232,8 +149,8 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
   }
 
   void _selectSuggestion(String suggestion) {
-    final displayPath = _formatPathForDisplay(suggestion, _homePath);
-    final continuedPath = _continueSearchPath(displayPath);
+    final displayPath = formatPathForDisplay(suggestion, _homePath);
+    final continuedPath = continueSearchPath(displayPath);
     _pathController.text = continuedPath;
     _pathController.selection = TextSelection.fromPosition(
       TextPosition(offset: continuedPath.length),
@@ -364,7 +281,7 @@ class _ProjectListScreenState extends State<ProjectListScreen> {
                                         final suggestion =
                                             _pathSuggestions[index];
                                         final displayPath =
-                                            _formatPathForDisplay(
+                                            formatPathForDisplay(
                                               suggestion,
                                               _homePath,
                                             );
