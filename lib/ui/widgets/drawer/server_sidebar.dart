@@ -3,16 +3,19 @@ import 'package:go_router/go_router.dart';
 import '../../../models/server_config.dart';
 import 'utils.dart';
 
+/// 服务器侧栏：展示当前服务器详情，并提供进入项目列表的入口。
 class ServerSidebar extends StatelessWidget {
   final List<ServerConfig> servers;
   final ServerConfig? selectedServer;
   final void Function(ServerConfig) onSelectServer;
+  final bool isDrawer;
 
   const ServerSidebar({
     super.key,
     required this.servers,
     required this.selectedServer,
     required this.onSelectServer,
+    this.isDrawer = true,
   });
 
   @override
@@ -33,7 +36,7 @@ class ServerSidebar extends StatelessWidget {
       children: [
         _Header(server: selectedServer!),
         const Divider(height: 1),
-        _ConnectButton(server: selectedServer!),
+        _ConnectButton(server: selectedServer!, isDrawer: isDrawer),
         Expanded(
           child: servers.isEmpty
               ? _EmptyState(colorScheme: colorScheme)
@@ -92,8 +95,9 @@ class _Header extends StatelessWidget {
 
 class _ConnectButton extends StatelessWidget {
   final ServerConfig server;
+  final bool isDrawer;
 
-  const _ConnectButton({required this.server});
+  const _ConnectButton({required this.server, this.isDrawer = true});
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +107,11 @@ class _ConnectButton extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton.icon(
           onPressed: () {
-            Navigator.pop(context);
-            context.push('/projects/${server.id}');
+            // 点击 Connect 后，真正发生的是跳转到该服务器的项目列表页。
+            if (isDrawer) {
+              Navigator.pop(context);
+            }
+            context.go('/projects/${server.id}');
           },
           icon: const Icon(Icons.login, size: 18),
           label: const Text('Connect'),
@@ -127,10 +134,7 @@ class _EmptyState extends StatelessWidget {
     return Center(
       child: Text(
         'No servers configured',
-        style: TextStyle(
-          color: colorScheme.onSurfaceVariant,
-          fontSize: 13,
-        ),
+        style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 13),
       ),
     );
   }
@@ -187,10 +191,7 @@ class _ServerList extends StatelessWidget {
           ),
           subtitle: Text(
             '${server.host}:${server.port}',
-            style: TextStyle(
-              fontSize: 11,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
           ),
           onTap: () => onSelectServer(server),
         );

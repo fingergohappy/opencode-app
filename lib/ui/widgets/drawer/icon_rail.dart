@@ -4,6 +4,8 @@ import '../../../models/project.dart';
 import '../../../models/server_config.dart';
 import 'utils.dart';
 
+/// 左侧最窄的一列图标导航。
+/// 这里主要负责“快速切换”，详细信息交给右侧 sidebar 展示。
 class DrawerIconRail extends StatelessWidget {
   final bool isServerMode;
   final List<ServerConfig> servers;
@@ -13,6 +15,7 @@ class DrawerIconRail extends StatelessWidget {
   final void Function(ServerConfig) onSelectServer;
   final void Function(Project) onSelectProject;
   final String? serverId;
+  final bool isDrawer;
 
   const DrawerIconRail({
     super.key,
@@ -24,6 +27,7 @@ class DrawerIconRail extends StatelessWidget {
     required this.onSelectServer,
     required this.onSelectProject,
     this.serverId,
+    this.isDrawer = true,
   });
 
   @override
@@ -34,46 +38,53 @@ class DrawerIconRail extends StatelessWidget {
       width: 56,
       child: Column(
         children: [
-          // Menu icon at top to close drawer
+          // Drawer 模式下保留一个关闭按钮；桌面固定侧栏时则留空。
           Tooltip(
             message: 'Close',
-            child: IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Navigator.pop(context),
-            ),
+            child: isDrawer
+                ? IconButton(
+                    icon: const Icon(Icons.menu),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                : const SizedBox(height: 48),
           ),
-          // Scrollable icons area
+          // 中间区域根据模式切换显示服务器或项目图标。
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 children: [
                   ...isServerMode
-                      ? servers.map((server) => _ServerIcon(
-                          server: server,
-                          isSelected: selectedServer?.id == server.id,
-                          colorScheme: colorScheme,
-                          onTap: () => onSelectServer(server),
-                        ))
-                      : projects.map((project) => _ProjectIcon(
-                          project: project,
-                          isSelected: selectedProject?.id == project.id,
-                          colorScheme: colorScheme,
-                          onTap: () => onSelectProject(project),
-                        )),
-                  // Add new button
+                      ? servers.map(
+                          (server) => _ServerIcon(
+                            server: server,
+                            isSelected: selectedServer?.id == server.id,
+                            colorScheme: colorScheme,
+                            onTap: () => onSelectServer(server),
+                          ),
+                        )
+                      : projects.map(
+                          (project) => _ProjectIcon(
+                            project: project,
+                            isSelected: selectedProject?.id == project.id,
+                            colorScheme: colorScheme,
+                            onTap: () => onSelectProject(project),
+                          ),
+                        ),
+                  // 最后一项不是数据本身，而是一个“新增/返回列表”的操作按钮。
                   _AddButton(
                     isServerMode: isServerMode,
                     colorScheme: colorScheme,
                     serverId: serverId,
+                    isDrawer: isDrawer,
                   ),
                 ],
               ),
             ),
           ),
-          // Bottom icons
+          // 底部放的是全局入口，例如设置页和服务器页。
           const Divider(height: 1),
-          _BottomIcons(colorScheme: colorScheme),
+          _BottomIcons(colorScheme: colorScheme, isDrawer: isDrawer),
         ],
       ),
     );
@@ -122,7 +133,9 @@ class _ServerIcon extends StatelessWidget {
               child: Text(
                 initial,
                 style: TextStyle(
-                  color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                  color: isSelected
+                      ? colorScheme.primary
+                      : colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                   fontFamily: 'monospace',
@@ -198,11 +211,13 @@ class _AddButton extends StatelessWidget {
   final bool isServerMode;
   final ColorScheme colorScheme;
   final String? serverId;
+  final bool isDrawer;
 
   const _AddButton({
     required this.isServerMode,
     required this.colorScheme,
     this.serverId,
+    this.isDrawer = true,
   });
 
   @override
@@ -215,11 +230,13 @@ class _AddButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              Navigator.pop(context);
+              if (isDrawer) {
+                Navigator.pop(context);
+              }
               if (isServerMode) {
                 context.go('/');
               } else {
-                context.push('/projects/$serverId');
+                context.go('/projects/$serverId');
               }
             },
             borderRadius: BorderRadius.circular(8),
@@ -249,8 +266,9 @@ class _AddButton extends StatelessWidget {
 
 class _BottomIcons extends StatelessWidget {
   final ColorScheme colorScheme;
+  final bool isDrawer;
 
-  const _BottomIcons({required this.colorScheme});
+  const _BottomIcons({required this.colorScheme, this.isDrawer = true});
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +281,9 @@ class _BottomIcons extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.settings_outlined, size: 20),
               onPressed: () {
-                Navigator.pop(context);
+                if (isDrawer) {
+                  Navigator.pop(context);
+                }
                 context.push('/settings');
               },
             ),
@@ -273,7 +293,9 @@ class _BottomIcons extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.dns_outlined, size: 20),
               onPressed: () {
-                Navigator.pop(context);
+                if (isDrawer) {
+                  Navigator.pop(context);
+                }
                 context.go('/');
               },
             ),

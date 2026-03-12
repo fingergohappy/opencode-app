@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../models/project.dart';
-import '../../models/api_models.dart';
 import 'app_drawer.dart';
 
-/// Scaffold wrapper that includes the app drawer
+/// 通用页面骨架。
+/// 把 AppBar、Drawer 和主体布局统一起来，减少各个页面重复写 Scaffold。
 class AppScaffold extends StatelessWidget {
   final Widget body;
   final String title;
@@ -11,10 +10,6 @@ class AppScaffold extends StatelessWidget {
   final List<Widget>? actions;
   final Widget? floatingActionButton;
   final bool showDrawer;
-  final bool showServersInDrawer;
-  final String? serverId;
-  final List<Project>? drawerProjects;
-  final List<Session>? drawerSessions;
 
   const AppScaffold({
     super.key,
@@ -24,10 +19,6 @@ class AppScaffold extends StatelessWidget {
     this.actions,
     this.floatingActionButton,
     this.showDrawer = true,
-    this.showServersInDrawer = true,
-    this.serverId,
-    this.drawerProjects,
-    this.drawerSessions,
   });
 
   @override
@@ -47,7 +38,8 @@ class AppScaffold extends StatelessWidget {
                 ),
               )
             : null,
-        title: titleWidget ??
+        title:
+            titleWidget ??
             Text(
               title,
               style: TextStyle(
@@ -58,14 +50,7 @@ class AppScaffold extends StatelessWidget {
             ),
         actions: actions,
       ),
-      drawer: showDrawer
-          ? AppDrawer(
-              showServers: showServersInDrawer,
-              serverId: serverId,
-              projects: drawerProjects,
-              sessions: drawerSessions,
-            )
-          : null,
+      drawer: showDrawer ? const AppDrawer() : null,
       body: body,
       floatingActionButton: floatingActionButton,
     );

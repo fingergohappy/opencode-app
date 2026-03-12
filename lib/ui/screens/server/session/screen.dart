@@ -3,8 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../data/server_store.dart';
 import '../../../../models/server_config.dart';
-import '../../../widgets/app_drawer.dart';
 
+/// 服务器列表页。
+/// 这里既负责展示本地保存的服务器，也负责新增、编辑和连通性测试。
 class ServerListScreen extends StatefulWidget {
   const ServerListScreen({super.key});
 
@@ -23,6 +24,7 @@ class _ServerListScreenState extends State<ServerListScreen> {
     _loadServers();
   }
 
+  /// 进入页面时先确保有默认服务器，再刷新当前列表。
   Future<void> _loadServers() async {
     await _serverStore.ensureDefault();
     final servers = await _serverStore.getAll();
@@ -32,6 +34,7 @@ class _ServerListScreenState extends State<ServerListScreen> {
     });
   }
 
+  /// 通过一个对话框同时承载“新增”和“编辑”两种服务器表单。
   void _showAddServerDialog(ServerConfig? initial) {
     final nameController = TextEditingController(text: initial?.name);
     final hostController = TextEditingController(text: initial?.host);
@@ -44,6 +47,7 @@ class _ServerListScreenState extends State<ServerListScreen> {
     String? testMessage;
     bool testSuccess = false;
 
+    // AlertDialog 自身不是 StatefulWidget，所以用 StatefulBuilder 管理弹窗内部状态。
     Future<void> testConnection(StateSetter setDialogState) async {
       final host = hostController.text;
       final port = int.tryParse(portController.text) ?? 8080;
@@ -216,70 +220,76 @@ class _ServerListScreenState extends State<ServerListScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AppScaffold(
-      showServersInDrawer: false,
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'OpenCode',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'monospace',
-                          color: colorScheme.onSurface,
+    return Stack(
+      children: [
+        _loading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'OpenCode',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'monospace',
+                            color: colorScheme.onSurface,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Select a server to connect',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: colorScheme.onSurfaceVariant,
+                        const SizedBox(height: 4),
+                        Text(
+                          'Select a server to connect',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
-                    itemCount: _servers.length,
-                    separatorBuilder: (_, index) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final server = _servers[index];
-                      return _ServerCard(
-                        server: server,
-                        onTap: () => context.push('/projects/${server.id}'),
-                        onEdit: () => _showAddServerDialog(server),
-                        onDelete: () async {
-                          await _serverStore.delete(server.id);
-                          _loadServers();
-                        },
-                      );
-                    },
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                      itemCount: _servers.length,
+                      separatorBuilder: (_, index) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final server = _servers[index];
+                        return _ServerCard(
+                          server: server,
+                          // 选中服务器后跳到该服务器下的项目列表页。
+                          onTap: () => context.go('/projects/${server.id}'),
+                          onEdit: () => _showAddServerDialog(server),
+                          onDelete: () async {
+                            await _serverStore.delete(server.id);
+                            _loadServers();
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+        Positioned(
+          right: 16,
+          bottom: 16,
+          child: FloatingActionButton(
+            onPressed: () => _showAddServerDialog(null),
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            child: const Text(
+              '+',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddServerDialog(null),
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
-        child: const Text(
-          '+',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

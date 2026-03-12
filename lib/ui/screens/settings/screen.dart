@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import '../../../data/settings_store.dart';
 import '../../../models/settings.dart';
 import '../../../main.dart';
-import '../../widgets/app_drawer.dart';
+import '../../widgets/app_scaffold.dart';
 
+/// 设置页。
+/// 这个页面既读取本地语言设置，也通过 AppState 控制全局主题切换。
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -23,6 +25,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadSettings();
   }
 
+  /// 语言设置目前不在 AppState 里，所以这里单独从 SettingsStore 读取。
   Future<void> _loadSettings() async {
     final language = await _settingsStore.getLanguage();
     setState(() {
@@ -62,6 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// 主题模式属于全局状态，因此直接调用 AppState 更新。
   void _showThemeModeDialog(AppState appState) {
     showDialog(
       context: context,
@@ -80,6 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// 主题预设同样走全局状态，变更后整个应用会立刻重建换肤。
   void _showThemePresetDialog(AppState appState) {
     showDialog(
       context: context,
@@ -98,6 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// 语言目前只是写本地存储并刷新当前页面，还没有接入完整国际化系统。
   void _showLanguageDialog() {
     showDialog(
       context: context,

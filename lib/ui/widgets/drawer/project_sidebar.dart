@@ -4,20 +4,26 @@ import '../../../models/project.dart';
 import '../../../models/api_models.dart';
 import 'utils.dart';
 
+/// 项目侧栏负责展示当前项目信息和该项目下的会话列表。
 class ProjectSidebar extends StatelessWidget {
   final Project? selectedProject;
   final List<Session> sessions;
   final String? serverId;
+  final String? selectedSessionId;
   final VoidCallback onCreateSession;
+  final bool isDrawer;
 
   const ProjectSidebar({
     super.key,
     required this.selectedProject,
     required this.sessions,
     required this.serverId,
+    this.selectedSessionId,
     required this.onCreateSession,
+    this.isDrawer = true,
   });
 
+  /// 后端返回的 sessions 可能混有别的项目，这里再按 projectId 做一次过滤。
   List<Session> _getSessionsForProject(String projectId) {
     return sessions.where((s) => s.projectID == projectId).toList();
   }
@@ -51,7 +57,9 @@ class ProjectSidebar extends StatelessWidget {
                   sessions: projectSessions,
                   serverId: serverId,
                   selectedProject: selectedProject,
+                  selectedSessionId: selectedSessionId,
                   colorScheme: colorScheme,
+                  isDrawer: isDrawer,
                 ),
         ),
       ],
@@ -145,13 +153,17 @@ class _SessionList extends StatelessWidget {
   final List<Session> sessions;
   final String? serverId;
   final Project? selectedProject;
+  final String? selectedSessionId;
   final ColorScheme colorScheme;
+  final bool isDrawer;
 
   const _SessionList({
     required this.sessions,
     required this.serverId,
     required this.selectedProject,
+    required this.selectedSessionId,
     required this.colorScheme,
+    required this.isDrawer,
   });
 
   @override
@@ -164,6 +176,7 @@ class _SessionList extends StatelessWidget {
 
         return ListTile(
           dense: true,
+          selected: session.id == selectedSessionId,
           leading: Icon(
             Icons.chat_bubble_outline,
             size: 18,
@@ -182,13 +195,16 @@ class _SessionList extends StatelessWidget {
               color: colorScheme.error.withValues(alpha: 0.7),
             ),
             onPressed: () {
+              // 会话删除接口还没接上，所以这里只保留占位入口。
               // TODO: Delete session
             },
           ),
           onTap: () {
-            Navigator.pop(context);
+            if (isDrawer) {
+              Navigator.pop(context);
+            }
             if (serverId != null && selectedProject != null) {
-              context.push(
+              context.go(
                 '/projects/$serverId/session?worktree=${Uri.encodeComponent(selectedProject!.worktree)}&session=${session.id}',
               );
             }

@@ -9,8 +9,9 @@ import '../../../../network/opencode_client.dart';
 import '../../../../theme/theme_spec.dart';
 import '../../../../network/api.dart';
 import '../../../../utils/app_logger.dart';
-import '../../../widgets/app_drawer.dart';
 
+/// 下面三个选择器的职责都很像：
+/// 把一组候选项包装成菜单，并把选中的结果回传给父组件。
 class _AgentSelector extends StatelessWidget {
   final List<Agent> agents;
   final Agent? selectedAgent;
@@ -229,6 +230,8 @@ void _log(String message) {
   _logger.info(message);
 }
 
+/// 项目会话页。
+/// 当前页面主要负责展示历史消息、文件 diff，以及底部输入与模型配置区域。
 class ProjectSessionScreen extends StatefulWidget {
   final String serverId;
   final String worktree;
@@ -251,7 +254,6 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
   final _scrollController = ScrollController();
 
   OpenCodeClient? _client;
-  Session? _currentSession;
   List<Message> _messages = [];
   List<DiffFile> _diffFiles = [];
   List<Agent> _agents = [];
@@ -265,6 +267,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
   bool _sending = false;
   int _selectedTab = 0;
 
+  /// 上下文对象会作为 query 一起发给后端，用来限定当前 worktree。
   Map<String, dynamic> get _context => {'worktree': widget.worktree};
 
   @override
@@ -280,6 +283,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     super.dispose();
   }
 
+  /// 初始化阶段需要同时准备 client、会话数据、可选 agent 和模型列表。
   Future<void> _loadData() async {
     _log('loadData: starting');
     final server = await _serverStore.getById(widget.serverId);
@@ -297,9 +301,11 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     _log('loadData: got ${sessions.length} sessions');
 
     final appConfig = await configApi.getAppConfig();
+    // 后端会返回全部 agent，这里只保留前端应该显示的那部分。
     final agents = appConfig.agents.where((a) => a.isVisible).toList();
     _log('loadData: got ${agents.length} visible agents');
 
+    // provider 和 model 是嵌套结构，这里先拍平成一个列表，方便 UI 直接选择。
     final allModels = <ProviderModel>[];
     for (final provider in appConfig.providers) {
       allModels.addAll(provider.models);
@@ -310,6 +316,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     List<Message> messages = [];
     List<DiffFile> diffFiles = [];
 
+    // 如果路由里传了 sessionId，优先尝试定位该会话；找不到时再退回最新会话。
     if (widget.sessionId != null) {
       try {
         currentSession = sessions.firstWhere((s) => s.id == widget.sessionId);
@@ -320,6 +327,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
       currentSession = sessions.first;
     }
 
+    // 只有真正选中了会话，才去拉消息列表和 diff 数据。
     if (currentSession != null && currentSession.id.isNotEmpty) {
       messages = await sessionApi.getMessages(
         currentSession.id,
@@ -332,7 +340,6 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     }
 
     setState(() {
-      _currentSession = currentSession;
       _messages = messages;
       _diffFiles = diffFiles;
       _agents = agents;
@@ -343,6 +350,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     });
   }
 
+  /// 当前发送逻辑还没接后端，所以这里只保留了输入保护和发送状态切换。
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty || _sending) return;
@@ -362,27 +370,19 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     final semanticColors = theme.extension<OpenCodeThemeColors>();
 
     if (_loading) {
-      return AppScaffold(
-        serverId: widget.serverId,
-        titleWidget: Text('Session'),
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return Center(child: CircularProgressIndicator());
     }
 
-    return AppScaffold(
-      serverId: widget.serverId,
-      titleWidget: Text(_currentSession?.title ?? 'New Session'),
-      body: Column(
-        children: [
-          _buildTabBar(colors),
-          Expanded(
-            child: _selectedTab == 0
-                ? _buildMessagesView(colors)
-                : _buildDiffView(colors, semanticColors),
-          ),
-          _buildInputArea(colors),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildTabBar(colors),
+        Expanded(
+          child: _selectedTab == 0
+              ? _buildMessagesView(colors)
+              : _buildDiffView(colors, semanticColors),
+        ),
+        _buildInputArea(colors),
+      ],
     );
   }
 
@@ -439,6 +439,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
       );
     }
 
+    // 聊天气泡本质上只是把消息角色映射成不同的对齐方式和背景色。
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(12),
@@ -537,6 +538,7 @@ class _ProjectSessionScreenState extends State<ProjectSessionScreen> {
     Color statusColor;
     IconData statusIcon;
 
+    // 后端只传字符串状态，这里把它映射成更适合 UI 展示的颜色和图标。
     switch (file.status) {
       case 'added':
         statusColor = semanticColors?.diffAdd ?? colors.primary;
