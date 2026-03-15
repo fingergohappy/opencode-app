@@ -1,0 +1,43 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - .dart_tool/**
+    - ios/Pods/**
+    - ios/.symlinks/**
+    - android/.gradle/**
+    - android/app/build/**
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    # 风格
+    prefer_single_quotes: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    avoid_print: false
+
+    # 性能
+    avoid_unnecessary_containers: true
+    avoid_redundant_argument_values: true
+    unnecessary_this: true
+
+    # 代码整洁
+    sort_constructors_first: true
+    sort_child_properties_last: true
+    use_key_in_widget_constructors: true
+
+    # 可读性
+    always_declare_return_types: false
+    require_trailing_commas: true
+
+    # Dart 常见规则
+    prefer_final_fields: true
+    prefer_final_locals: true
+    unnecessary_new: true
+    unnecessary_const: true
