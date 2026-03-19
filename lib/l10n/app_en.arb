@@ -1,0 +1,61 @@
+{
+  "@@locale": "en",
+  "appTitle": "OpenCode Themes",
+  "homeTitle": "OpenCode Theme Playground",
+  "themeControlsTitle": "Theme Controls",
+  "themeControlsDescription": "Switch the preset theme and choose whether the app uses light, dark, or system mode.",
+  "presetThemeLabel": "Preset theme",
+  "themeModeLabel": "Theme mode",
+  "languageLabel": "Language",
+  "languageSystem": "System",
+  "languageEnglish": "English",
+  "languageChinese": "Chinese",
+  "themeModeSystem": "System",
+  "themeModeLight": "Light",
+  "themeModeDark": "Dark",
+  "presetChipLabel": "Preset: {themeName}",
+  "@presetChipLabel": {
+    "placeholders": {
+      "themeName": {}
+    }
+  },
+  "modeChipLabel": "Mode: {mode}",
+  "@modeChipLabel": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "settingsTitle": "Settings",
+  "settingsGeneralSectionTitle": "General",
+  "settingsShowReasoningSummariesTitle": "Show reasoning summaries",
+  "settingsShowReasoningSummariesSubtitle": "Display AI reasoning process",
+  "settingsExpandShellToolPartsTitle": "Expand shell tool parts",
+  "settingsExpandShellToolPartsSubtitle": "Auto-expand shell command outputs",
+  "settingsExpandEditToolPartsTitle": "Expand edit tool parts",
+  "settingsExpandEditToolPartsSubtitle": "Auto-expand edit operation details",
+  "settingsFollowUpBehaviorTitle": "Follow-up behavior",
+  "settingsFollowUpBehaviorAuto": "Automatic",
+  "settingsFollowUpBehaviorManual": "Manual confirmation",
+  "settingsFollowUpBehaviorDisabled": "Disabled",
+  "settingsAppearanceSectionTitle": "Appearance",
+  "settingsColorSchemeTitle": "Color scheme",
+  "settingsThemeTitle": "Theme",
+  "settingsUnknownTheme": "Unknown",
+  "settingsNotificationsSectionTitle": "System Notifications",
+  "settingsNotificationAgentTitle": "Agent",
+  "settingsNotificationAgentSubtitle": "Notify when tasks complete or need attention",
+  "settingsNotificationPermissionsTitle": "Permissions",
+  "settingsNotificationPermissionsSubtitle": "Notify when permissions are requested",
+  "settingsNotificationErrorsTitle": "Errors",
+  "settingsNotificationErrorsSubtitle": "Notify when errors occur",
+  "settingsSoundSectionTitle": "Sound",
+  "settingsEnableSoundTitle": "Enable sound",
+  "settingsEnableSoundSubtitle": "Play audio feedback for notifications",
+  "settingsUpdatesSectionTitle": "Updates",
+  "settingsAutoCheckUpdatesTitle": "Auto-check for updates",
+  "settingsAutoCheckUpdatesSubtitle": "Automatically check for new versions",
+  "settingsShowReleaseNotesTitle": "Show release notes",
+  "settingsShowReleaseNotesSubtitle": "Display what's new after updates",
+  "counterDescription": "You have pushed the button this many times:",
+  "incrementTooltip": "Increment"
+}

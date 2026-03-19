@@ -1,0 +1,79 @@
+<h2>Servers Page Visual Test</h2>
+<p class="subtitle">先测试浏览器链路。下面是两个 servers 页的视觉方向草图，点一下任意方案就会记录选择。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A · Airy Console</div>
+        <div class="mockup-body" style="background:linear-gradient(180deg,#fbf7ef 0%,#f3efe6 100%);padding:18px;">
+          <div style="height:130px;border-radius:24px;background:linear-gradient(180deg,#efe6d8 0%,#f7f2ea 100%);margin-bottom:18px;"></div>
+          <input class="mock-input" value=" 搜索服务器名称或地址" style="border-radius:999px;background:#fffaf2;border:1px solid #d8c9b2;box-shadow:0 10px 30px rgba(92,70,32,.10);">
+          <div style="height:16px"></div>
+          <div style="display:grid;gap:12px;">
+            <div style="background:#fffaf2;border:1px solid #d8c9b2;border-radius:22px;padding:14px 16px;">
+              <div style="font-weight:700;color:#2a241a;">本地开发</div>
+              <div style="color:#7c6e5a;font-size:13px;">http://localhost:4096</div>
+            </div>
+            <div style="background:#f7f1e6;border:1px solid #e1d6c5;border-radius:22px;padding:14px 16px;">
+              <div style="font-weight:700;color:#2a241a;">OpenCode 官方</div>
+              <div style="color:#7c6e5a;font-size:13px;">https://api.opencode.dev</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · 轻空气感</h3>
+      <p>大留白、圆角搜索条、浅暖背景，像“连接入口”而不是“系统设置表单”。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B · Signal Board</div>
+        <div class="mockup-body" style="background:linear-gradient(180deg,#0f1720 0%,#131d28 100%);padding:18px;">
+          <div style="height:90px;border-radius:28px;background:radial-gradient(circle at top left,#1f6d66 0%,#0f1720 72%);margin-bottom:18px;border:1px solid #24434c;"></div>
+          <input class="mock-input" value=" 搜索服务器名称或地址" style="border-radius:18px;background:#16212d;border:1px solid #2a3a48;color:#dce7ef;box-shadow:none;">
+          <div style="height:16px"></div>
+          <div style="display:grid;gap:12px;">
+            <div style="background:#182430;border:1px solid #2b4253;border-radius:18px;padding:14px 16px;">
+              <div style="font-weight:700;color:#ecf6ff;">美东生产</div>
+              <div style="color:#91a7ba;font-size:13px;">https://prod-us-east.example.com</div>
+            </div>
+            <div style="background:#131d28;border:1px solid #283746;border-radius:18px;padding:14px 16px;">
+              <div style="font-weight:700;color:#ecf6ff;">欧西生产</div>
+              <div style="color:#91a7ba;font-size:13px;">https://prod-eu-west.example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · 信号面板</h3>
+      <p>更像运维控制台，层次更强，适合强调状态感、在线离线、默认连接这些信息。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="pros-cons">
+    <div class="pros">
+      <h4>这次测试想确认</h4>
+      <ul>
+        <li>你能否正常打开本地浏览器页面</li>
+        <li>点击选项后能否形成明确偏好</li>
+        <li>我们后面是否适合继续用这种方式讨论美化</li>
+      </ul>
+    </div>
+    <div class="cons">
+      <h4>暂时不代表</h4>
+      <ul>
+        <li>最终颜色和字体已定</li>
+        <li>最终布局细节已定</li>
+        <li>Flutter 实现细节已定</li>
+      </ul>
+    </div>
+  </div>
+</div>

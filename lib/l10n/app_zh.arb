@@ -1,0 +1,61 @@
+{
+  "@@locale": "zh",
+  "appTitle": "OpenCode 主题",
+  "homeTitle": "OpenCode 主题演示",
+  "themeControlsTitle": "主题控制",
+  "themeControlsDescription": "切换预设主题，并选择应用使用浅色、深色或跟随系统模式。",
+  "presetThemeLabel": "预设主题",
+  "themeModeLabel": "主题模式",
+  "languageLabel": "语言",
+  "languageSystem": "跟随系统",
+  "languageEnglish": "英文",
+  "languageChinese": "中文",
+  "themeModeSystem": "跟随系统",
+  "themeModeLight": "浅色",
+  "themeModeDark": "深色",
+  "presetChipLabel": "预设：{themeName}",
+  "@presetChipLabel": {
+    "placeholders": {
+      "themeName": {}
+    }
+  },
+  "modeChipLabel": "模式：{mode}",
+  "@modeChipLabel": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "settingsTitle": "设置",
+  "settingsGeneralSectionTitle": "通用",
+  "settingsShowReasoningSummariesTitle": "显示推理摘要",
+  "settingsShowReasoningSummariesSubtitle": "显示 AI 推理过程",
+  "settingsExpandShellToolPartsTitle": "展开 shell 工具片段",
+  "settingsExpandShellToolPartsSubtitle": "自动展开 shell 命令输出",
+  "settingsExpandEditToolPartsTitle": "展开 edit 工具片段",
+  "settingsExpandEditToolPartsSubtitle": "自动展开编辑操作详情",
+  "settingsFollowUpBehaviorTitle": "追问行为",
+  "settingsFollowUpBehaviorAuto": "自动",
+  "settingsFollowUpBehaviorManual": "手动确认",
+  "settingsFollowUpBehaviorDisabled": "禁用",
+  "settingsAppearanceSectionTitle": "外观",
+  "settingsColorSchemeTitle": "配色方案",
+  "settingsThemeTitle": "主题",
+  "settingsUnknownTheme": "未知",
+  "settingsNotificationsSectionTitle": "系统通知",
+  "settingsNotificationAgentTitle": "Agent",
+  "settingsNotificationAgentSubtitle": "当任务完成或需要关注时通知",
+  "settingsNotificationPermissionsTitle": "权限",
+  "settingsNotificationPermissionsSubtitle": "当需要权限时通知",
+  "settingsNotificationErrorsTitle": "错误",
+  "settingsNotificationErrorsSubtitle": "发生错误时通知",
+  "settingsSoundSectionTitle": "声音",
+  "settingsEnableSoundTitle": "启用声音",
+  "settingsEnableSoundSubtitle": "为通知播放音频反馈",
+  "settingsUpdatesSectionTitle": "更新",
+  "settingsAutoCheckUpdatesTitle": "自动检查更新",
+  "settingsAutoCheckUpdatesSubtitle": "自动检查新版本",
+  "settingsShowReleaseNotesTitle": "显示发行说明",
+  "settingsShowReleaseNotesSubtitle": "更新后显示新内容",
+  "counterDescription": "你已经按下按钮这么多次了：",
+  "incrementTooltip": "增加"
+}

@@ -91,6 +91,8 @@ The lint baseline is `package:flutter_lints/flutter.yaml` plus explicit local ru
 - Prefer final locals and final fields.
 - Avoid unnecessary `new`, unnecessary `const`, and redundant argument values.
 - Keep files compatible with standard Dart formatter output.
+- Add comments at key code paths when the logic, boundary conditions, or design intent is not obvious.
+- Use Chinese for code comments, and keep comments focused on the important reasoning rather than restating the code.
 
 ### Imports
 - Use Flutter package imports such as `package:flutter/material.dart`.
@@ -130,6 +132,10 @@ The lint baseline is `package:flutter_lints/flutter.yaml` plus explicit local ru
 - This is currently a very small Flutter app close to the default scaffold.
 - Keep architecture proportional to the app size.
 - Prefer simple Flutter composition over premature abstraction.
+- Write code with reasonable extensibility in mind; do not optimize only for the current narrow case when nearby requirements are likely to grow.
+- Prefer boundaries and naming that can absorb adjacent settings, states, or features without forcing large rewrites later.
+- When the future shape is already clear, implement the long-term structure directly instead of introducing a known temporary or transitional layout.
+- For multi-domain app settings, prefer domain subdirectories such as `app_settings/theme/` and `app_settings/locale/` over flattening all controllers and providers into the `app_settings/` root.
 - Do not introduce large frameworks or app-wide patterns without a concrete need.
 - If you add files, group them in an obvious Flutter-friendly way.
 - Keep diffs focused; do not mix bug fixes with unrelated cleanup.
@@ -137,16 +143,18 @@ The lint baseline is `package:flutter_lints/flutter.yaml` plus explicit local ru
 ## Recommended Directory Structure
 - The current project uses a lightweight layered layout under `lib/`.
 - Keep `main.dart` as the startup entry and move app assembly into `app/` as the project grows.
+- Prefer a feature-first structure: group pages, widgets, providers, and data under the feature or module that owns them.
 - Use `app/` for app-shell setup such as `MaterialApp`, global initialization, and top-level composition.
 - Use `router/` for centralized navigation setup when routing is introduced.
-- Use `theme/` for shared `ThemeData`, colors, and typography.
+- Use `theme/` for shared `ThemeData`, colors, typography, and theme-owned state such as theme providers/controllers.
 - Use `core/` for cross-cutting, non-business helpers only.
 - Under `core/`, use `constants/`, `extensions/`, `logger/`, and `utils/` for narrowly scoped shared code.
-- Use `models/` for data structures; do not over-separate API models and domain models until there is a real need.
-- Use `data/api/` for remote data access and `data/storage/` for local persistence.
-- Use `providers/` for state management and orchestration between UI and data sources.
-- Use `pages/` for full screens and `widgets/` for reusable UI pieces.
-- Do not add `repositories/` yet; in this codebase, prefer `page -> provider -> api` and `page -> provider -> storage` until multi-source coordination actually appears.
+- Use `models/` for shared data structures reused across multiple features; keep feature-specific models inside their owning feature until there is a real need to promote them.
+- Use feature-local `data/api/` and `data/storage/` for remote data access and local persistence; only create top-level shared data layers when they are truly cross-feature.
+- Prefer placing providers next to the feature or module that owns the state. Use a shared `app/providers/` or `core/providers/` location only for truly app-level providers without a clear single-feature owner.
+- Prefer feature-local `pages/` and `widgets/` directories. Only create top-level shared `pages/` or `widgets/` when those files are genuinely app-wide or cross-feature.
+- Do not add `repositories/` yet; in this codebase, prefer `page -> feature provider -> feature api/storage` until multi-source coordination actually appears.
+- Example: `user/` may own `pages/`, `widgets/`, `providers/`, `data/`, and feature-local `models/`; only promote code to top-level shared directories when it is reused across multiple features.
 - Do not add `mock/` until local fake data is actively needed for UI development or decoupled feature work.
 
 ## Current Caveats
@@ -157,10 +165,12 @@ The lint baseline is `package:flutter_lints/flutter.yaml` plus explicit local ru
 ## Recommended Agent Workflow
 1. Read the relevant implementation file and nearby tests first.
 2. Match the existing style before introducing a new pattern.
-3. Make the smallest change that fully solves the task.
-4. Run `dart format` on changed Dart files.
-5. Run targeted tests, then broader tests if the scope warrants it.
-6. Run `flutter analyze` when possible and report clearly if pre-existing config issues block it.
+3. Follow the current page-first development workflow: build standalone pages first, mount each page onto `HomePage` for visual and interaction validation, and only assemble app-wide routing after the individual pages are validated.
+4. Treat `HomePage` as a temporary validation shell during this phase. Keep it lightweight so feature pages can be swapped in and reviewed quickly.
+5. Make the smallest change that fully solves the task.
+6. Run `dart format` on changed Dart files.
+7. Run targeted tests, then broader tests if the scope warrants it.
+8. Run `flutter analyze` when possible and report clearly if pre-existing config issues block it.
 
 ## Do Not Assume
 - Do not assume CI exists.

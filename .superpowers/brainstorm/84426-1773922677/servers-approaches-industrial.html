@@ -1,0 +1,119 @@
+<h2>Servers Approaches</h2>
+<p class="subtitle">基于你刚定下的约束：跟随当前主题、保守改动、硬边细线卡片、硬边矩形搜索框、整体克制工业感。下面是 3 条可实现路线。</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A · Outline Stack · Recommended</div>
+        <div class="mockup-body" style="background:#121212;padding:18px;">
+          <div style="font:700 11px/1.2 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:#f08c3a;">Connection Grid</div>
+          <div style="margin-top:8px;font:800 30px/.92 ui-sans-serif,sans-serif;color:#f3f3ee;">Servers</div>
+          <div style="height:72px"></div>
+          <div style="border:1px solid #363636;border-radius:10px;background:rgba(255,255,255,.02);padding:14px 16px;color:#8f8f89;font:700 13px/1.2 ui-monospace,monospace;">SEARCH HOST / LABEL</div>
+          <div style="height:14px"></div>
+          <div style="display:grid;gap:10px;">
+            <div style="border:1px solid #3d3d3d;border-radius:16px;background:#171717;padding:14px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                <div style="font:800 17px/1.05 ui-sans-serif,sans-serif;color:#f3f3ee;">LOCAL / DEV</div>
+                <div style="padding:5px 8px;border-radius:999px;background:#f08c3a;color:#111;font:800 10px/1 ui-monospace,monospace;">DEFAULT</div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">http://localhost:4096</div>
+            </div>
+            <div style="border:1px solid #343434;border-radius:16px;background:#131313;padding:14px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                <div style="font:800 17px/1.05 ui-sans-serif,sans-serif;color:#f3f3ee;">PROD / EU-WEST</div>
+                <div style="width:10px;height:10px;border-radius:999px;background:#22b36b;margin-top:4px;"></div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">https://prod-eu-west.example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · 轮廓堆叠</h3>
+      <p>推荐。保留现有结构，只把卡片、标签、搜索框和字体层级换成工业语言。风险最低，完成度最高。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B · Ledger Rows</div>
+        <div class="mockup-body" style="background:#121212;padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:end;">
+            <div style="font:800 28px/.92 ui-sans-serif,sans-serif;color:#f3f3ee;">Servers</div>
+            <div style="font:700 11px/1.2 ui-monospace,monospace;letter-spacing:.14em;color:#8f8f89;">09 NODES</div>
+          </div>
+          <div style="height:56px"></div>
+          <div style="border:1px solid #363636;background:#171717;padding:14px 16px;color:#8f8f89;font:700 13px/1.2 ui-monospace,monospace;">SEARCH HOST / LABEL</div>
+          <div style="height:14px"></div>
+          <div style="border-top:1px solid #353535;">
+            <div style="padding:14px 4px;border-bottom:1px solid #2b2b2b;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                <div style="font:800 16px/1 ui-sans-serif,sans-serif;color:#f3f3ee;">LOCAL / DEV</div>
+                <div style="padding:5px 8px;border:1px solid #5d472e;color:#f0b072;font:800 10px/1 ui-monospace,monospace;">DEFAULT</div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">http://localhost:4096</div>
+            </div>
+            <div style="padding:14px 4px;border-bottom:1px solid #2b2b2b;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                <div style="font:800 16px/1 ui-sans-serif,sans-serif;color:#f3f3ee;">PROD / EU-WEST</div>
+                <div style="width:10px;height:10px;background:#22b36b;"></div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">https://prod-eu-west.example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · 台账列表</h3>
+      <p>更冷、更像系统清单。工业感更强，但“卡片感”会变弱，选中态和滑动操作的承载也更紧。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C · Signal Plate</div>
+        <div class="mockup-body" style="background:#121212;padding:18px;position:relative;overflow:hidden;">
+          <div style="position:absolute;left:16px;right:16px;top:62px;font:900 90px/.85 ui-sans-serif,sans-serif;letter-spacing:-.05em;color:rgba(255,255,255,.05);pointer-events:none;">SRV</div>
+          <div style="position:relative;">
+            <div style="font:700 11px/1.2 ui-monospace,monospace;letter-spacing:.16em;text-transform:uppercase;color:#f08c3a;">Connection Grid</div>
+            <div style="margin-top:8px;font:800 30px/.92 ui-sans-serif,sans-serif;color:#f3f3ee;">Servers</div>
+          </div>
+          <div style="height:72px"></div>
+          <div style="position:relative;border:1px solid #363636;border-radius:10px;background:rgba(255,255,255,.02);padding:14px 16px;color:#8f8f89;font:700 13px/1.2 ui-monospace,monospace;">SEARCH HOST / LABEL</div>
+          <div style="height:14px"></div>
+          <div style="display:grid;gap:10px;position:relative;">
+            <div style="border:1px solid #3d3d3d;border-radius:16px;background:#171717;padding:14px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                <div style="font:800 17px/1.05 ui-sans-serif,sans-serif;color:#f3f3ee;">LOCAL / DEV</div>
+                <div style="padding:5px 8px;border-radius:999px;background:#f08c3a;color:#111;font:800 10px/1 ui-monospace,monospace;">DEFAULT</div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">http://localhost:4096</div>
+            </div>
+            <div style="border:1px solid #343434;border-radius:16px;background:#131313;padding:14px 16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                <div style="font:800 17px/1.05 ui-sans-serif,sans-serif;color:#f3f3ee;">PROD / EU-WEST</div>
+                <div style="width:10px;height:10px;border-radius:999px;background:#22b36b;margin-top:4px;"></div>
+              </div>
+              <div style="margin-top:9px;color:#989892;font:600 12px/1.35 ui-monospace,monospace;">https://prod-eu-west.example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · 信号牌</h3>
+      <p>在 A 的基础上加非常淡的超大背景字，记忆点更强。风险是比你说的“克制”再往前迈了一小步。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>我的建议</h3>
+  <p class="subtitle">选 A。它最符合你给的全部约束，也最适合先做一版高完成度而不是堆概念。你如果想保留一点识别度，可以在 A 里只加极淡的背景字，不把它做成主角。</p>
+</div>
